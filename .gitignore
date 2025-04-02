@@ -1,0 +1,26 @@
+# Ignore compiled binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Ignore test binaries and coverage output
+*.test
+*.out
+
+# Ignore build directories and generated artifacts (ignores any folder named "bin" or "pkg" at any level)
+**/bin/
+**/pkg/
+
+# Ignore vendored dependencies
+vendor/
+
+# Ignore IDE/editor configuration files and temporary files
+.idea/
+.vscode/
+*.swp
+
+# Ignore system files
+.DS_Store
+Thumbs.db

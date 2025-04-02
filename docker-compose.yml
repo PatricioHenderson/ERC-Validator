@@ -1,0 +1,40 @@
+services:
+  db:
+      image: postgres
+      container_name: is-erc-validator-postgres
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: admin
+        POSTGRES_DB: api
+      ports:
+        - "5432:5432"
+      
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - services/api/.env
+    depends_on:
+      - db
+
+  validator:
+    build:
+      context: .
+      dockerfile: services/validator/Dockerfile
+    ports:
+      - "3001:3001" 
+    depends_on:
+      - db
+
+  web3:
+    build:
+      context: .
+      dockerfile: services/web3/Dockerfile
+    ports:
+      - "3002:3002"
+    depends_on:
+      - db
+#  docker run --name is-erc-validator-postgres -e POSTGRES_PASSWORD=admin -d -p 5432:5432 -e POSTGRES_PASSWORD=admin -d postgres
