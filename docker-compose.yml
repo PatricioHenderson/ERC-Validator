@@ -25,7 +25,9 @@ services:
       context: .
       dockerfile: services/validator/Dockerfile
     ports:
-      - "3001:3001" 
+      - "3001:3001"
+    env_file:
+      - services/validator/.env
     depends_on:
       - db
 
@@ -35,6 +37,8 @@ services:
       dockerfile: services/web3/Dockerfile
     ports:
       - "3002:3002"
+    env_file:
+      - services/web3/.env
     depends_on:
       - db
 #  docker run --name is-erc-validator-postgres -e POSTGRES_PASSWORD=admin -d -p 5432:5432 -e POSTGRES_PASSWORD=admin -d postgres

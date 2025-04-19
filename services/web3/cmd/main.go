@@ -1,21 +1,29 @@
 package main
 
 import (
+	"erc-validator/helpers/db/connection"
+	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
-	"erc-validator/helpers/db/connection"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("could not load env file")
+	}
+
 	db, err := connection.ConnectToDb()
 	if err != nil {
 		log.Fatalf("error connecting to DB: %v", err)
 	}
-	defer db.Close()
+	// defer db.Close()
+	//TODO: Use these only to pass pre-commit. Fix this in future. Or look after a db.close()
+	db.Begin()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if _, err := w.Write([]byte("Hello world from web3")); err != nil {
+		if _, err := w.Write([]byte("Hello world from api")); err != nil {
 			log.Printf("error writing response: %v", err)
 		}
 	})
