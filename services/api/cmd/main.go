@@ -1,30 +1,32 @@
 package main
 
 import (
+	"erc-validator/api/internal/routes"
+	"erc-validator/helpers/db/connection"
 	"log"
 	"net/http"
 	"os"
-	"erc-validator/helpers/db/connection"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	db, err := connection.ConnectToDb()
+	err := godotenv.Load()
 	if err != nil {
+		log.Println("could not load env file")
+	}
+
+	if _, err := connection.ConnectToDb(); err != nil {
 		log.Fatalf("error connecting to DB: %v", err)
 	}
-	defer db.Close()
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if _, err := w.Write([]byte("Hello world from api")); err != nil {
-			log.Printf("error writing response: %v", err)
-		}
-	})
+	
+	r := routes.InitRoutes()
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "3000"
 	}
 
 	log.Printf("API running on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }

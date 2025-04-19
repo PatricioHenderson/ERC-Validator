@@ -1,16 +1,24 @@
 package connection
 
 import (
-	"context"
 	"errors"
-	"database/sql"
 	"fmt"
+	"log"
 	"os"
-	"time"
+
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func ConnectToDb() (*sql.DB, error) {
+func ConnectToDb() (*gorm.DB, error) {
+	if os.Getenv("NODE_ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Println("No .env file found, using system environment variables")
+		}
+	}
+
 	databaseUrl := os.Getenv("DATABASE_URL")
 	if databaseUrl == "" {
 		errMsg := "missing required environment variable: DATABASE_URL"
@@ -28,17 +36,9 @@ func ConnectToDb() (*sql.DB, error) {
 		databaseUrl = fmt.Sprintf("%s sslmode=verify-full sslrootcert=%s", databaseUrl, path)
 	}
 
-	db, err := sql.Open("postgres", databaseUrl)
-
+	db, err := gorm.Open(postgres.Open(databaseUrl), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := db.PingContext(ctx); err != nil {
-		return nil, fmt.Errorf("failed to ping database (db pointer: %v): %w", db, err)
 	}
 
 	return db, nil
