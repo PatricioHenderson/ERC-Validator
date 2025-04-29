@@ -1,8 +1,7 @@
 package db
 
 import (
-  "gorm.io/gorm"
+	"gorm.io/gorm"
 )
-
 
 var Conn *gorm.DB

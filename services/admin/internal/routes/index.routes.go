@@ -3,8 +3,8 @@ package routes
 import (
 	// "erc-validator/admin/internal/routes/handlers"
 	// "erc-validator/api/internal/middleware"
-	"github.com/gorilla/mux"
 	"erc-validator/admin/internal/routes/handlers"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -13,7 +13,7 @@ func InitRoutes() *mux.Router {
 
 	// public routes
 	// mux.HandleFunc("/login", handlers.LogInHandler)
-	
+
 	r.HandleFunc("/user/create", handlers.CreateUserHandler).Methods(http.MethodPost)
 	//private routes
 	// mux.Handle("/admin", middleware.autMiddleware(http.HandlerFunc(handlers.AdminHandler)))
