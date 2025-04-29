@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.24"
+      - name: Run fmt and vet
+        run: |
+          find . -type f -name go.mod -not -path './vendor/*' | while read -r filepath; do
+            moddir=$(dirname "$filepath")
+            echo "Processing module: $moddir"
+            pushd "$moddir" > /dev/null
+            pkgs=$(go list ./... 2>/dev/null)
+            if [ -n "$pkgs" ]; then
+              echo "Formatting packages: $pkgs"
+              go fmt $pkgs
+              echo "Vetting packages: $pkgs"
+              go vet $pkgs
+            else
+              echo "No Go packages found in $moddir"
+            fi
+            popd > /dev/null
+          done
+      - name: Run tests
+        run: |
+          find . -type f -name go.mod -not -path './vendor/*' | while read -r filepath; do
+            moddir=$(dirname "$filepath")
+            echo "Testing module: $moddir"
+            pushd "$moddir" > /dev/null
+            pkgs=$(go list ./... 2>/dev/null)
+            if [ -n "$pkgs" ]; then
+              echo "Running tests in: $pkgs"
+              go test $pkgs -v
+            else
+              echo "No tests to run in $moddir"
+            fi
+            popd > /dev/null
+          done

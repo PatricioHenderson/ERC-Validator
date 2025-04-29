@@ -19,7 +19,7 @@ func main() {
 	if _, err := connection.ConnectToDb(); err != nil {
 		log.Fatalf("error connecting to DB: %v", err)
 	}
-	
+
 	r := routes.InitRoutes()
 
 	port := os.Getenv("PORT")
