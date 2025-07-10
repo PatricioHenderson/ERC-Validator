@@ -1,18 +1,24 @@
 package routes
 
 import (
-	// "erc-validator/api/internal/middleware"
-	"erc-validator/api/internal/routes/handlers"
+	"erc-validator/api/internal/middleware"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-func InitRoutes() *http.ServeMux {
-	mux := http.NewServeMux()
+func InitRoutes() *mux.Router {
+	r := mux.NewRouter()
 
 	// public routes
-	mux.HandleFunc("/login", handlers.LogInHandler)
+	public := r.NewRoute().Subrouter()
+	public.HandleFunc("/admin/users/login", ProxyHandler).Methods(http.MethodPost)
+	public.HandleFunc("/admin/users/create", ProxyHandler).Methods(http.MethodPost)
 
 	//private routes
-	// mux.Handle("/admin", middleware.autMiddleware(http.HandlerFunc(handlers.AdminHandler)))
-	return mux
+	private := r.NewRoute().Subrouter()
+	private.Use(middleware.Auth)
+	private.PathPrefix("/").HandlerFunc(ProxyHandler)
+
+	return r
 }

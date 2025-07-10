@@ -4,11 +4,16 @@ go 1.24.1
 
 require (
 	erc-validator/helpers v0.0.0
-	github.com/golangci/golangci-lint v1.64.8
 	github.com/joho/godotenv v1.5.1
 )
 
 replace erc-validator/helpers => ../helpers
+
+require (
+	github.com/golang-jwt/jwt/v5 v5.2.2
+	github.com/golangci/golangci-lint v1.64.8
+	github.com/gorilla/mux v1.8.1
+)
 
 require (
 	4d63.com/gocheckcompilerdirectives v1.3.0 // indirect
