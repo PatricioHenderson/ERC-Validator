@@ -1,9 +1,11 @@
 package models
 
 import (
+	"erc-validator/admin/internal/db"
 	"fmt"
 	"net/mail"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -20,4 +22,14 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 		return fmt.Errorf("invalid email: %w", err)
 	}
 	return nil
+}
+
+func IsPasswordValid(email string, password string) bool {
+	var user User
+	result := db.Conn.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		return false
+	}
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	return err == nil
 }
